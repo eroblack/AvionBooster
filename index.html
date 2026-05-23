@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eroblack Flight Master</title>
+    <title>Eroblack Casino Engine</title>
     <style>
         body {
             background-color: #020205;
             color: white;
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Arial', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -18,105 +18,94 @@
             overflow: hidden;
         }
 
-        /* Sky Engine - Graphique Pro */
+        /* Sky View */
         #game-frame {
             width: 360px;
-            height: 580px;
-            background: linear-gradient(to bottom, #001f3f, #000);
+            height: 450px;
+            background: radial-gradient(circle, #1a2a6c, #b21f1f, #fdbb2d);
+            background-size: 200% 200%;
             border-radius: 40px;
             border: 4px solid #ffd700;
             position: relative;
-            box-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
             overflow: hidden;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.2);
         }
 
         #multiplier-box {
             position: absolute;
-            top: 60px;
+            top: 40px;
             width: 100%;
             text-align: center;
             z-index: 20;
         }
 
-        #count { font-size: 45px; font-weight: 900; color: #ffd700; text-shadow: 0 0 20px #ffd700; }
-        .unit { font-size: 15px; color: #fff; }
+        #count { font-size: 50px; font-weight: 900; color: #fff; text-shadow: 2px 2px 10px #000; }
+        #status-mode { font-size: 14px; font-weight: bold; color: #ffd700; text-transform: uppercase; }
 
         #airplane {
-            font-size: 60px;
+            font-size: 65px;
             position: absolute;
             bottom: 40px;
-            left: calc(50% - 30px);
+            left: 50%;
+            transform: translateX(-50%);
             z-index: 15;
-            transition: transform 0.1s;
         }
 
         .cloud {
             position: absolute;
             background: white;
-            opacity: 0.2;
+            opacity: 0.3;
             border-radius: 50px;
-            filter: blur(5px);
             animation: drift linear infinite;
         }
 
         @keyframes drift {
             from { transform: translateY(-50px); }
-            to { transform: translateY(600px); }
+            to { transform: translateY(500px); }
         }
 
-        /* Interface Inputs & Buttons */
+        /* Panel */
         #ui-panel {
+            background: #111;
             padding: 20px;
+            border-radius: 0 0 40px 40px;
+            width: 324px;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            gap: 10px;
         }
 
-        .input-group { margin-bottom: 10px; text-align: center; }
-        .input-group label { font-size: 11px; color: #ffd700; font-weight: bold; }
+        .input-group { display: flex; justify-content: space-between; align-items: center; }
+        .input-group label { font-size: 10px; color: #ffd700; font-weight: bold; }
 
-        .edittext-genyen, .edittext-peye {
+        .edittext {
             background: #000;
-            border: 2px solid #ffd700;
-            border-radius: 12px;
+            border: 1px solid #444;
             color: #00ff00;
-            font-size: 22px;
+            font-size: 20px;
             text-align: center;
-            padding: 8px;
-            width: 240px;
-            font-weight: bold;
+            padding: 5px;
+            width: 140px;
+            border-radius: 8px;
         }
 
-        .edittext-peye { color: #ff4d4d; border-color: #ff4d4d; }
-
-        #main-action-btn {
-            background: linear-gradient(180deg, #ffd700, #b8860b);
-            color: black;
+        #main-btn {
+            background: linear-gradient(180deg, #ffd700, #ff8c00);
             border: none;
-            padding: 15px 50px;
-            font-size: 24px;
-            font-weight: 900;
-            border-radius: 50px;
+            padding: 15px;
+            font-size: 22px;
+            font-weight: bold;
+            border-radius: 15px;
             cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            transition: 0.3s;
         }
 
-        #main-action-btn:active { transform: scale(0.9); }
-
-        /* Modal dialogue */
         #modal {
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            background: white;
-            color: black;
-            padding: 25px;
-            border-radius: 20px;
-            text-align: center;
-            z-index: 100;
-            display: none;
-            width: 260px;
+            background: white; color: black;
+            padding: 20px; border-radius: 15px;
+            text-align: center; z-index: 100; display: none;
         }
     </style>
 </head>
@@ -124,32 +113,24 @@
 
     <div id="game-frame">
         <div id="multiplier-box">
+            <div id="status-mode">VÒL NORMAL</div>
             <div id="count">0</div>
-            <div class="unit">SANTIM</div>
         </div>
-
         <div id="airplane">✈️</div>
-
+        
         <div id="modal">
-            <h2 style="margin:0">MISE: 5G</h2>
-            <p>Èske w prè pou vòl sa a?</p>
-            <button onclick="confirmFlight()" style="background:green; color:white; padding:10px 20px; border:none; border-radius:10px; cursor:pointer;">WI, ALE!</button>
-            <button onclick="hideModal()" style="background:red; color:white; padding:10px 20px; border:none; border-radius:10px; cursor:pointer; margin-left:10px;">NON</button>
+            <h3>KONFIME MISE (5G)</h3>
+            <button onclick="confirmFlight()" style="background:green; color:white; border:none; padding:10px; border-radius:5px;">WI, ALE!</button>
+            <button onclick="hideModal()" style="background:red; color:white; border:none; padding:10px; border-radius:5px;">NON</button>
         </div>
     </div>
 
     <div id="ui-panel">
         <div class="input-group">
-            <label>KREDI PEYE (MISES)</label><br>
-            <input type="text" id="edittextPeye" class="edittext-peye" value="0" readonly>
+            <div><label>TOTAL PEYE</label><br><input type="text" id="edittextPeye" class="edittext" value="0" readonly style="color:#ff4d4d"></div>
+            <div><label>TOTAL GENYEN</label><br><input type="text" id="edittextGenyen" class="edittext" value="0" readonly></div>
         </div>
-
-        <div class="input-group">
-            <label>KREDI GENYEN (REKÒMPANS)</label><br>
-            <input type="text" id="edittextGenyen" class="edittext-genyen" value="0" readonly>
-        </div>
-
-        <button id="main-action-btn" onclick="triggerAction()">KÒMANSE (5G)</button>
+        <button id="main-btn" onclick="btnAction()">KÒMANSE (5G)</button>
     </div>
 
     <script>
@@ -157,123 +138,92 @@
         let gameActive = false;
         let crashPoint = 0;
         let flightLoop;
-        let totalGenyen = 0;
         let totalPeye = 0;
-        let lossStreak = 0; // Entèlijans pou konte pèt yo
-        const GOURDE_UNIT = 1000000;
-        const LIMIT_MAX = 100 * GOURDE_UNIT; // Limit 100 Goud pèsonn pa ka pase
+        let totalGenyen = 0;
+        const GOURDE = 1000000;
 
-        const countDisplay = document.getElementById('count');
-        const btn = document.getElementById('main-action-btn');
-        const airplane = document.getElementById('airplane');
-        const genyenField = document.getElementById('edittextGenyen');
-        const peyeField = document.getElementById('edittextPeye');
-        const modal = document.getElementById('modal');
-        const frame = document.getElementById('game-frame');
-
-        function triggerAction() {
-            if (!gameActive) {
-                modal.style.display = 'block';
-            } else {
-                cashOut();
-            }
+        function btnAction() {
+            if (!gameActive) document.getElementById('modal').style.display = 'block';
+            else cashOut();
         }
 
-        function hideModal() { modal.style.display = 'none'; }
+        function hideModal() { document.getElementById('modal').style.display = 'none'; }
 
         function confirmFlight() {
             hideModal();
             totalPeye += 5;
-            peyeField.value = totalPeye;
+            document.getElementById('edittextPeye').value = totalPeye;
             startFlight();
         }
 
         function startFlight() {
             gameActive = true;
             santim = 0;
-            
-            // --- LOGIQUE INTELLIGENTE ---
-            // Kalkile kote l ap pété
-            if (lossStreak >= 6) {
-                // Si l pèdi anpil, ba li yon chans "Big Win" ant 20 a 99 Goud
-                let bigWin = (Math.random() * 79) + 20; 
-                crashPoint = Math.floor(bigWin * GOURDE_UNIT);
+            let netBalance = totalGenyen - totalPeye;
+            const statusLabel = document.getElementById('status-mode');
+
+            // --- LOJIK ENTÈLIJAN ---
+            if (netBalance <= -500) { 
+                // Si l pèdi plis pase 500, bay chans monte rive 300-500 Goud
+                statusLabel.innerText = "SUPER RECOVERY MODE 🚀";
+                statusLabel.style.color = "#00ff00";
+                crashPoint = Math.floor((Math.random() * 300 + 200) * GOURDE);
+            } else if (netBalance <= -250) {
+                // Si l pèdi ant 250 ak 500, bay chans rive 100-200 Goud
+                statusLabel.innerText = "ADVANTAGE MODE ✨";
+                crashPoint = Math.floor((Math.random() * 100 + 100) * GOURDE);
             } else {
-                // Sinon, fè l pété ba (ant 0.5g ak 10g) pou l ka pèdi
-                crashPoint = Math.floor((Math.random() * 10) * GOURDE_UNIT) + 100000;
+                // Sinon, limit la se 100 Goud e li pété souvan anba
+                statusLabel.innerText = "VÒL NORMAL";
+                statusLabel.style.color = "#ffd700";
+                crashPoint = Math.floor((Math.random() * 95) * GOURDE) + (0.5 * GOURDE);
             }
 
-            // Garanti ke li PA JANM pase 100 Goud
-            if (crashPoint >= LIMIT_MAX) {
-                crashPoint = LIMIT_MAX - 50000; 
-            }
-
-            btn.innerText = "REKIPERE!";
-            btn.style.background = "red";
-            btn.style.color = "white";
+            document.getElementById('main-btn').innerText = "REKIPERE!";
+            document.getElementById('main-btn').style.background = "red";
 
             flightLoop = setInterval(() => {
-                // Vitès la akselere plis li monte
-                let speed = 15000 + (santim / 100);
-                santim += Math.floor(Math.random() * speed);
+                santim += Math.floor(Math.random() * 20000) + 10000;
+                document.getElementById('count').innerText = (santim / GOURDE).toFixed(2) + " G";
                 
-                countDisplay.innerText = santim.toLocaleString();
-                
-                // Animasyon nwaj
-                if(Math.random() > 0.85) spawnCloud();
-
-                // Lojik pété a
-                if (santim >= crashPoint) {
-                    explode();
-                }
-            }, 70);
+                if(Math.random() > 0.8) spawnCloud();
+                if (santim >= crashPoint) explode();
+            }, 50);
         }
 
         function explode() {
             clearInterval(flightLoop);
             gameActive = false;
-            lossStreak++; // Yon pèt anplis
-            
-            countDisplay.innerText = "BOOM! 💥";
-            countDisplay.style.color = "red";
-            airplane.innerText = "🔥";
-            
-            setTimeout(resetGame, 2000);
+            document.getElementById('count').innerText = "BOOM! 💥";
+            document.getElementById('airplane').innerText = "🔥";
+            setTimeout(reset, 2000);
         }
 
         function cashOut() {
             clearInterval(flightLoop);
             gameActive = false;
-            
-            let won = Math.floor(santim / GOURDE_UNIT);
-            if (won > 0) {
-                totalGenyen += won;
-                genyenField.value = totalGenyen;
-                lossStreak = 0; // Li genyen, nou reset chans li
-            }
-            
-            resetGame();
+            let won = Math.floor(santim / GOURDE);
+            totalGenyen += won;
+            document.getElementById('edittextGenyen').value = totalGenyen;
+            reset();
         }
 
-        function resetGame() {
-            btn.innerText = "KÒMANSE (5G)";
-            btn.style.background = "linear-gradient(180deg, #ffd700, #b8860b)";
-            btn.style.color = "black";
-            countDisplay.style.color = "#ffd700";
-            airplane.innerText = "✈️";
+        function reset() {
+            document.getElementById('main-btn').innerText = "KÒMANSE (5G)";
+            document.getElementById('main-btn').style.background = "linear-gradient(180deg, #ffd700, #ff8c00)";
+            document.getElementById('airplane').innerText = "✈️";
             gameActive = false;
         }
 
         function spawnCloud() {
             const c = document.createElement('div');
             c.className = 'cloud';
-            c.style.width = (Math.random() * 80 + 40) + 'px';
-            c.style.height = '20px';
+            c.style.width = '60px'; c.style.height = '20px';
             c.style.left = Math.random() * 300 + 'px';
             c.style.top = '-30px';
-            c.style.animationDuration = (Math.random() * 1.5 + 1) + 's';
-            frame.appendChild(c);
-            setTimeout(() => c.remove(), 2000);
+            c.style.animationDuration = '1.5s';
+            document.getElementById('game-frame').appendChild(c);
+            setTimeout(() => c.remove(), 1500);
         }
     </script>
 </body>
