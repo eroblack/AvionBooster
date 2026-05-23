@@ -1,52 +1,208 @@
-<!DOCTYPE html><html lang="fr">
+<!DOCTYPE html>
+<html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mon Site Web</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(120deg, #4facfe, #00f2fe);
-      color: #fff;
-      text-align: center;
-    }
-    header {
-      padding: 50px 20px;
-    }
-    h1 {
-      font-size: 40px;
-      margin-bottom: 10px;
-    }
-    p {
-      font-size: 18px;
-      opacity: 0.9;
-    }
-    .btn {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 12px 25px;
-      background: #fff;
-      color: #333;
-      border-radius: 25px;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    footer {
-      position: absolute;
-      bottom: 20px;
-      width: 100%;
-      font-size: 14px;
-      opacity: 0.8;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eroblack Flight Booster</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Design de l'écran de jeu */
+        #game-container {
+            width: 90%;
+            max-width: 500px;
+            background: linear-gradient(145deg, #222, #333);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-align: center;
+            border: 2px solid #ffd700;
+        }
+
+        #display-area {
+            height: 200px;
+            position: relative;
+            overflow: hidden;
+            background: #000;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #airplane {
+            font-size: 50px;
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            transition: transform 0.1s linear;
+        }
+
+        #counter {
+            font-size: 40px;
+            font-weight: bold;
+            color: #ffd700;
+            z-index: 10;
+        }
+
+        /* Les champs texte (EditText) */
+        .info-box {
+            margin: 10px 0;
+            font-size: 18px;
+        }
+
+        input {
+            background: #444;
+            color: #ffd700;
+            border: 1px solid #ffd700;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 20px;
+            width: 80%;
+        }
+
+        /* Bouton Booster / Cash Out */
+        #action-btn {
+            background: linear-gradient(to bottom, #ffd700, #b8860b);
+            color: black;
+            border: none;
+            padding: 15px 40px;
+            font-size: 22px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+        }
+
+        #action-btn:active {
+            transform: scale(0.95);
+        }
+
+        #action-btn:disabled {
+            background: #555;
+            color: #888;
+            cursor: not-allowed;
+        }
+
+        .status-msg {
+            margin-top: 10px;
+            height: 20px;
+            font-weight: bold;
+        }
+    </style>
 </head>
-<body>  <header>
-    <h1>Byenveni sou sit mwen</h1>
-    <p>Mwen kreye sit sa ak HTML + CSS</p>
-    <a class="btn" href="#">Klike la</a>
-  </header>  <footer>
-    © 2026 - Sit pèsonèl mwen
-  </footer></body>
+<body>
+
+    <div id="game-container">
+        <h2 style="color: #ffd700; margin-top: 0;">FLIGHT BOOSTER</h2>
+        
+        <div id="display-area">
+            <div id="airplane">✈️</div>
+            <div id="counter">0.00</div>
+        </div>
+
+        <div class="info-box">
+            <label>KREDI GENYEN (Gourdes):</label><br>
+            <input type="text" id="edittextGenyen" value="0" readonly>
+        </div>
+
+        <button id="action-btn">KÒMANSE VOL LA</button>
+        <div id="status" class="status-msg"></div>
+    </div>
+
+    <script>
+        let counterValue = 0;
+        let gameActive = false;
+        let crashPoint = 0;
+        let interval;
+        let totalGourdes = 0;
+
+        const counterDisplay = document.getElementById('counter');
+        const actionBtn = document.getElementById('action-btn');
+        const airplane = document.getElementById('airplane');
+        const edittextGenyen = document.getElementById('edittextGenyen');
+        const statusMsg = document.getElementById('status');
+
+        function startGame() {
+            gameActive = true;
+            counterValue = 0;
+            statusMsg.innerText = "";
+            statusMsg.style.color = "white";
+            
+            // Defini kote l ap pété a pa azar (ant 100 ak 50000 pa egzanp)
+            crashPoint = Math.floor(Math.random() * 40000) + 1000;
+            
+            actionBtn.innerText = "REKIPERE KREDI";
+            actionBtn.style.background = "linear-gradient(to bottom, #ff4500, #8b0000)";
+            actionBtn.style.color = "white";
+
+            interval = setInterval(() => {
+                counterValue += Math.floor(Math.random() * 150) + 10;
+                counterDisplay.innerText = counterValue;
+
+                // Animasyon avyon an k ap monte
+                let move = (counterValue / 500);
+                airplane.style.transform = `translate(${move}px, -${move}px)`;
+
+                if (counterValue >= crashPoint) {
+                    crashGame();
+                }
+            }, 50);
+        }
+
+        function crashGame() {
+            clearInterval(interval);
+            gameActive = false;
+            statusMsg.innerText = "BOOM! AVYON AN ÉCLATÉ! 💥";
+            statusMsg.style.color = "red";
+            counterDisplay.style.color = "red";
+            
+            resetButton();
+        }
+
+        function cashOut() {
+            clearInterval(interval);
+            gameActive = false;
+            
+            // Kalkil: Chak 10,000 = 1 Gourde
+            let wonAmount = Math.floor(counterValue / 10000);
+            totalGourdes += wonAmount;
+            
+            edittextGenyen.value = totalGourdes;
+            statusMsg.innerText = "BRAVO! OU REKIPERE " + wonAmount + " GOURDES!";
+            statusMsg.style.color = "#00ff00";
+            
+            resetButton();
+        }
+
+        function resetButton() {
+            actionBtn.innerText = "REKÒMANSE VOL LA";
+            actionBtn.style.background = "linear-gradient(to bottom, #ffd700, #b8860b)";
+            actionBtn.style.color = "black";
+            airplane.style.transform = `translate(0px, 0px)`;
+            setTimeout(() => { counterDisplay.style.color = "#ffd700"; }, 1000);
+        }
+
+        actionBtn.addEventListener('click', () => {
+            if (!gameActive) {
+                startGame();
+            } else {
+                cashOut();
+            }
+        });
+    </script>
+</body>
 </html>
