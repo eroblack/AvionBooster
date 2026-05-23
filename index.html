@@ -3,52 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eroblack Booster - Casino Logic</title>
+    <title>Eroblack Booster Pro - Sketchware Connect</title>
     <style>
         body { 
             background: #000; color: white; text-align: center; 
             margin: 0; font-family: 'Segoe UI', sans-serif; 
             display: flex; flex-direction: column; align-items: center;
-            justify-content: center; height: 100vh;
+            justify-content: center; height: 100vh; overflow: hidden;
         }
 
         /* --- STYLE DIALOGUE --- */
-        #custom-dialogue {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: #111; border: 2px solid #ffd700; border-radius: 20px;
-            padding: 20px; width: 280px; z-index: 1000; display: none;
-            box-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
-        }
         #dialogue-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.85); z-index: 999; display: none;
         }
-        .diag-btn { padding: 12px 25px; margin: 10px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; }
+        #custom-dialogue {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: #111; border: 2px solid #ffd700; border-radius: 20px;
+            padding: 20px; width: 280px; z-index: 1000; display: none;
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.4);
+        }
+        .diag-btn { padding: 12px 25px; margin: 10px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; font-size: 16px; }
         .btn-wi { background: #ffd700; color: #000; }
         .btn-non { background: #444; color: #fff; }
 
         /* --- GAME INTERFACE --- */
         #game-box {
-            width: 340px; height: 380px; background: #050505;
+            width: 340px; height: 380px; background: radial-gradient(circle, #050505, #111);
             border: 3px solid #ffd700; border-radius: 35px;
             position: relative; overflow: hidden;
         }
 
-        #santim-raw { font-size: 42px; font-weight: 900; color: #ffd700; margin-top: 50px; }
-        #goud-converted { font-size: 18px; color: #fff; opacity: 0.7; }
+        #santim-raw { font-size: 45px; font-weight: 900; color: #ffd700; margin-top: 50px; text-shadow: 0 0 15px #ffd700; }
+        #goud-converted { font-size: 18px; color: #fff; opacity: 0.7; margin-top: 5px; }
         #airplane { font-size: 60px; position: absolute; bottom: 40px; left: 40%; transition: 0.1s; }
 
         /* --- STATS PANEL --- */
         #ui-panel { width: 340px; margin-top: 20px; }
         .stats-row { display: flex; justify-content: space-between; margin-bottom: 15px; }
         .box { background: #111; border: 1px solid #ffd700; padding: 12px; border-radius: 15px; width: 44%; }
-        .label { font-size: 10px; color: #ffd700; font-weight: bold; }
-        .edittext { font-size: 26px; font-weight: bold; color: #00ff00; }
+        .label { font-size: 10px; color: #ffd700; font-weight: bold; text-transform: uppercase; }
+        .edittext { font-size: 26px; font-weight: bold; color: #00ff00; margin-top: 5px; }
 
         #main-btn {
             background: linear-gradient(180deg, #ffd700, #ff8c00);
             border: none; padding: 18px; width: 100%; font-size: 22px;
             font-weight: bold; border-radius: 50px; cursor: pointer; color: #000;
+            box-shadow: 0 4px 15px rgba(255, 140, 0, 0.3);
         }
     </style>
 </head>
@@ -57,7 +58,7 @@
     <div id="dialogue-overlay"></div>
     <div id="custom-dialogue">
         <h3 id="diag-title" style="color:#ffd700; margin-top:0;">MIZE 5 GOUD</h3>
-        <p id="diag-msg">Eske ou vle demare vòl sa a?</p>
+        <p id="diag-msg">Eske ou vle demare vòl sa a pou 5 Goud?</p>
         <div id="diag-actions">
             <button class="diag-btn btn-wi" id="confirm-btn">WI</button>
             <button class="diag-btn btn-non" onclick="closeDialogue()">NON</button>
@@ -81,14 +82,22 @@
                 <div id="edittextGenyen" class="edittext">0</div>
             </div>
         </div>
-        <button id="main-btn" onclick="handleInput()">JWE KONVÈTI</button>
+        <button id="main-btn" onclick="handleInput()">JWE BOOSTER</button>
     </div>
 
     <script>
         let santim = 0, isRunning = false, loop, crashLimit = 0;
-        let lastWin = false; // Pou tcheke si l te genyen kou anvan an
-        let consecutiveLosses = 0; // Konte konbyen fwa li pèdi
+        let lastWin = false; 
+        let consecutiveLosses = 0; 
         const MILION = 1000000;
+
+        // --- KOMINIKASYON AK SKETCHWARE ---
+        function voyeBayApp(id, val) {
+            if (window.SketchwareInterface) {
+                // Voye done a sou fòm "id:valè"
+                window.SketchwareInterface.showToast(id + ":" + val);
+            }
+        }
 
         function closeDialogue() {
             document.getElementById('dialogue-overlay').style.display = 'none';
@@ -97,8 +106,8 @@
 
         function handleInput() {
             if (!isRunning) {
-                document.getElementById('diag-title').innerText = "MIZE 5 GOUD";
-                document.getElementById('diag-msg').innerText = "Vòl sa ap koute 5 Goud.";
+                document.getElementById('diag-title').innerText = "KONFIMASYON";
+                document.getElementById('diag-msg').innerText = "Vòl la koute 5 Goud. Kontinye?";
                 document.getElementById('dialogue-overlay').style.display = 'block';
                 document.getElementById('custom-dialogue').style.display = 'block';
                 document.getElementById('confirm-btn').onclick = startFlight;
@@ -112,23 +121,25 @@
             isRunning = true;
             santim = 0;
             
+            // UI Update & Voye nan App
             document.getElementById('edittextPeye').innerText = "5";
-            document.getElementById('edittextGenyen').innerText = "0";
-
-            // --- LOJIK BOOSTER INTELLIGENCE ---
+            voyeBayApp("edittextPeye", "5");
             
+            document.getElementById('edittextGenyen').innerText = "0";
+            voyeBayApp("edittextGenyen", "0");
+
+            // --- LOJIK BOOSTER SERE ---
             if (lastWin === true) {
-                // SI LI TE GENYEN KOU ANVAN AN: Li OBLIJE pèdi kou sa (Crash ant 0.10G ak 0.90G)
-                crashLimit = Math.floor((Math.random() * 0.8 + 0.1) * MILION);
+                // Si l te genyen kou anvan an, li pèdi vòl sa a (Crash anba 1G)
+                crashLimit = Math.floor((Math.random() * 0.7 + 0.2) * MILION);
             } 
-            else if (consecutiveLosses >= 5) {
-                // SI LI PÈDI ANPIL (5+ fwa): Ba l yon chans rive nan 6G a 9G
-                crashLimit = Math.floor((Math.random() * 3.5 + 6) * MILION);
+            else if (consecutiveLosses >= 6) {
+                // Si l pèdi anpil (6 vòl), miltiplikatè rar la debloke (6G a 9G)
+                crashLimit = Math.floor((Math.random() * 3 + 6) * MILION);
             } 
             else {
-                // LOJIK NÒMAL: Pèdi anba 3G pou l pa fè benefis fasil
-                // Pifò vòl ap pété ant 1.10G ak 2.80G
-                crashLimit = Math.floor((Math.random() * 1.7 + 1.1) * MILION);
+                // Lojik nòmal: pété souvan ant 1.10G ak 2.50G
+                crashLimit = Math.floor((Math.random() * 1.4 + 1.1) * MILION);
             }
 
             document.getElementById('main-btn').innerText = "REKIPERE KÒB";
@@ -147,14 +158,14 @@
         function crash() {
             clearInterval(loop);
             isRunning = false;
-            lastWin = false; // Li pèdi
-            consecutiveLosses++; // Ogmante kontè pèt la
+            lastWin = false;
+            consecutiveLosses++;
             
             document.getElementById('santim-raw').innerText = "CRASH! 💥";
             document.getElementById('airplane').innerText = "🔥";
-            document.getElementById('edittextGenyen').innerText = "0";
             
-            setTimeout(resetUI, 1800);
+            voyeBayApp("edittextGenyen", "0"); // Pèdi
+            setTimeout(resetUI, 2000);
         }
 
         function cashOut() {
@@ -164,20 +175,22 @@
             let won = Math.floor(santim / MILION);
             
             if (won > 0) {
-                lastWin = true; // Li genyen
-                consecutiveLosses = 0; // Reset pèt yo paske l genyen
+                lastWin = true; 
+                consecutiveLosses = 0; 
                 document.getElementById('edittextGenyen').innerText = won;
+                voyeBayApp("edittextGenyen", won); // Voye ganyen an nan App la
                 document.getElementById('santim-raw').style.color = "#00ff00";
             } else {
                 lastWin = false;
                 consecutiveLosses++;
+                voyeBayApp("edittextGenyen", "0");
             }
             
             setTimeout(resetUI, 1500);
         }
 
         function resetUI() {
-            document.getElementById('main-btn').innerText = "JWE KONVÈTI";
+            document.getElementById('main-btn').innerText = "JWE BOOSTER";
             document.getElementById('main-btn').style.background = "linear-gradient(180deg, #ffd700, #ff8c00)";
             document.getElementById('santim-raw').style.color = "#ffd700";
             document.getElementById('airplane').innerText = "✈️";
