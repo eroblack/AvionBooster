@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eroblack Booster - Dialogue Edition</title>
+    <title>Eroblack Booster Pro</title>
     <style>
         body { 
             background: #000; color: white; text-align: center; 
             margin: 0; font-family: 'Segoe UI', sans-serif; 
             display: flex; flex-direction: column; align-items: center;
+            justify-content: center; height: 100vh;
         }
 
         /* --- STYLE DIALOGUE --- */
@@ -16,37 +17,32 @@
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: #111; border: 2px solid #ffd700; border-radius: 20px;
             padding: 20px; width: 280px; z-index: 1000; display: none;
-            box-shadow: 0 0 50px rgba(255, 214, 0, 0.4);
         }
         #dialogue-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.8); z-index: 999; display: none;
         }
-        .diag-btn {
-            padding: 10px 20px; margin: 10px; border-radius: 10px; border: none;
-            font-weight: bold; cursor: pointer;
-        }
+        .diag-btn { padding: 12px 25px; margin: 10px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; }
         .btn-wi { background: #ffd700; color: #000; }
         .btn-non { background: #444; color: #fff; }
 
-        /* --- VIDEO & GAME BOX --- */
-        #video-container { width: 100%; height: 180px; background: #000; border-bottom: 2px solid #ffd700; }
+        /* --- GAME INTERFACE --- */
         #game-box {
-            width: 340px; height: 350px; background: #050505;
-            border: 3px solid #ffd700; border-radius: 30px; margin-top: 15px;
+            width: 340px; height: 380px; background: #050505;
+            border: 3px solid #ffd700; border-radius: 35px;
             position: relative; overflow: hidden;
         }
 
-        #santim-raw { font-size: 40px; font-weight: 900; color: #ffd700; margin-top: 40px; }
-        #goud-converted { font-size: 16px; color: #fff; opacity: 0.8; }
-        #airplane { font-size: 50px; position: absolute; bottom: 30px; left: 42%; }
+        #santim-raw { font-size: 45px; font-weight: 900; color: #ffd700; margin-top: 50px; }
+        #goud-converted { font-size: 18px; color: #fff; opacity: 0.7; }
+        #airplane { font-size: 60px; position: absolute; bottom: 40px; left: 40%; }
 
         /* --- STATS PANEL --- */
-        #ui-panel { width: 340px; margin-top: 15px; }
+        #ui-panel { width: 340px; margin-top: 20px; }
         .stats-row { display: flex; justify-content: space-between; margin-bottom: 15px; }
-        .box { background: #111; border: 1px solid #ffd700; padding: 10px; border-radius: 12px; width: 45%; }
-        .label { font-size: 10px; color: #ffd700; text-transform: uppercase; }
-        .edittext { font-size: 22px; font-weight: bold; color: #00ff00; }
+        .box { background: #111; border: 1px solid #ffd700; padding: 12px; border-radius: 15px; width: 44%; }
+        .label { font-size: 10px; color: #ffd700; font-weight: bold; }
+        .edittext { font-size: 26px; font-weight: bold; color: #00ff00; }
 
         #main-btn {
             background: linear-gradient(180deg, #ffd700, #ff8c00);
@@ -59,15 +55,13 @@
 
     <div id="dialogue-overlay"></div>
     <div id="custom-dialogue">
-        <h3 id="diag-title" style="color:#ffd700; margin-top:0;">MIZE 5 GOUD</h3>
-        <p id="diag-msg">Èske ou vle peye 5 Goud pou demare avyon an?</p>
+        <h3 style="color:#ffd700; margin-top:0;">MIZE 5 GOUD</h3>
+        <p id="diag-msg">Eske ou vle kòmanse vòl sa a pou 5 Goud?</p>
         <div id="diag-actions">
             <button class="diag-btn btn-wi" id="confirm-btn">WI</button>
             <button class="diag-btn btn-non" onclick="closeDialogue()">NON</button>
         </div>
     </div>
-
-    <div id="video-container"><div id="player"></div></div>
 
     <div id="game-box">
         <div id="santim-raw">0</div>
@@ -78,35 +72,23 @@
     <div id="ui-panel">
         <div class="stats-row">
             <div class="box">
-                <div class="label">Total Peye</div>
+                <div class="label">EDT_PEYE</div>
                 <div id="edittextPeye" class="edittext">0</div>
             </div>
             <div class="box">
-                <div class="label">Balans Ou</div>
+                <div class="label">EDT_GENYEN</div>
                 <div id="edittextGenyen" class="edittext">0</div>
             </div>
         </div>
-        <button id="main-btn" onclick="handleInput()">DEMARE AVYON</button>
+        <button id="main-btn" onclick="handleInput()">JWE KADASTRAL</button>
     </div>
 
     <script>
-        let mem_Peye = 0, mem_Genyen = 0, santim = 0, isRunning = false, crashLimit = 0, loop;
+        let santim = 0, isRunning = false, loop, crashLimit = 0;
         const MILION = 1000000;
 
-        // --- DIALOGUE ENGINE ---
-        function showDialogue(title, msg, type) {
-            document.getElementById('diag-title').innerText = title;
-            document.getElementById('diag-msg').innerText = msg;
-            document.getElementById('dialogue-overlay').style.display = 'block';
-            document.getElementById('custom-dialogue').style.display = 'block';
-            
-            const confirmBtn = document.getElementById('confirm-btn');
-            confirmBtn.onclick = function() {
-                closeDialogue();
-                if (type === 'MIZE') processStart();
-                if (type === 'OK') return;
-            };
-        }
+        // Nou sipoze itilizatè a gen yon balans nan Sketchware
+        let balansAktif = 100; 
 
         function closeDialogue() {
             document.getElementById('dialogue-overlay').style.display = 'none';
@@ -115,28 +97,27 @@
 
         function handleInput() {
             if (!isRunning) {
-                if (mem_Genyen >= 5) {
-                    showDialogue("MIZE 5 GOUD", "Sistèm nan pral retire 5 Goud nan balans ou.", "MIZE");
-                } else {
-                    showDialogue("BALANS BAS", "Ou pa gen ase kredi. Gade videyo pou fè plis kòb.", "OK");
-                }
+                document.getElementById('dialogue-overlay').style.display = 'block';
+                document.getElementById('custom-dialogue').style.display = 'block';
+                document.getElementById('confirm-btn').onclick = startFlight;
             } else {
                 cashOut();
             }
         }
 
-        function processStart() {
+        function startFlight() {
+            closeDialogue();
             isRunning = true;
             santim = 0;
-            mem_Genyen -= 5;
-            mem_Peye += 5;
-            updateUI();
+            
+            // 1. Set edittextPeye a 5 lè l kòmanse
+            document.getElementById('edittextPeye').innerText = "5";
+            document.getElementById('edittextGenyen').innerText = "0"; // Reset ganyen an pou vòl sa
 
-            // Lojik Sekrè Booster
-            let balans = mem_Peye - mem_Genyen;
-            crashLimit = (balans < 0) ? Math.floor((Math.random() * 0.8 + 0.3) * MILION) : Math.floor((Math.random() * 10 + 2) * MILION);
+            // Lojik Booster (Crash ant 1.20G ak 15.00G pa azar)
+            crashLimit = Math.floor((Math.random() * 14 + 1.2) * MILION);
 
-            document.getElementById('main-btn').innerText = "REKIPERE KÒB!";
+            document.getElementById('main-btn').innerText = "REKIPERE KÒB";
             document.getElementById('main-btn').style.background = "red";
             document.getElementById('airplane').innerText = "✈️";
 
@@ -144,6 +125,7 @@
                 santim += Math.floor(Math.random() * 90000) + 40000;
                 document.getElementById('santim-raw').innerText = santim.toLocaleString();
                 document.getElementById('goud-converted').innerText = (santim/MILION).toFixed(2) + " GOUD";
+
                 if (santim >= crashLimit) crash();
             }, 80);
         }
@@ -151,43 +133,31 @@
         function crash() {
             clearInterval(loop);
             isRunning = false;
-            document.getElementById('santim-raw').innerText = "BOOM! 💥";
+            document.getElementById('santim-raw').innerText = "CRASH! 💥";
             document.getElementById('airplane').innerText = "🔥";
-            showDialogue("PÈDI", "Avyon an pété! Ou pèdi 5 Goud la.", "OK");
-            setTimeout(resetButtons, 1000);
+            // Lè l pèdi, li pa genyen anyen
+            document.getElementById('edittextGenyen').innerText = "0";
+            setTimeout(resetUI, 2000);
         }
 
         function cashOut() {
             clearInterval(loop);
             isRunning = false;
+            
+            // 2. Set edittextGenyen ak valè li genyen an (chif won)
             let won = Math.floor(santim / MILION);
-            mem_Genyen += won;
-            showDialogue("GENYEN!", "Ou rekiperé " + won + " Goud avèk siksè!", "OK");
-            updateUI();
-            resetButtons();
+            document.getElementById('edittextGenyen').innerText = won;
+            
+            document.getElementById('santim-raw').style.color = "#00ff00";
+            setTimeout(resetUI, 1500);
         }
 
-        function updateUI() {
-            document.getElementById('edittextPeye').innerText = mem_Peye;
-            document.getElementById('edittextGenyen').innerText = mem_Genyen;
-        }
-
-        function resetButtons() {
-            document.getElementById('main-btn').innerText = "DEMARE AVYON";
+        function resetUI() {
+            document.getElementById('main-btn').innerText = "JWE KADASTRAL";
             document.getElementById('main-btn').style.background = "linear-gradient(180deg, #ffd700, #ff8c00)";
+            document.getElementById('santim-raw').style.color = "#ffd700";
+            document.getElementById('airplane').innerText = "✈️";
             isRunning = false;
-        }
-
-        // --- YOUTUBE API ---
-        var tag = document.createElement('script'); tag.src = "https://www.youtube.com/iframe_api";
-        var firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-        var player;
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('player', { height: '100%', width: '100%', videoId: 'BlJUFpQLPJY',
-                playerVars: { 'autoplay': 1, 'controls': 1 },
-                events: { 'onStateChange': (e) => { if(e.data == YT.PlayerState.ENDED) { mem_Genyen += 1; updateUI(); } } }
-            });
         }
     </script>
 </body>
