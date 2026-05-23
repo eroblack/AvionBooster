@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eroblack Pro Flight - 1M Logic</title>
+    <title>Eroblack Pro Flight - No Decimals</title>
     <style>
         body {
             background-color: #050505; color: white;
@@ -27,18 +27,17 @@
         }
 
         #multiplier-display {
-            position: absolute; top: 50px; width: 100%; text-align: center;
-            z-index: 20;
+            position: absolute; top: 50px; width: 100%; text-align: center; z-index: 20;
         }
 
         #santim-raw {
-            font-size: 45px; font-weight: 900; color: #ffd700;
+            font-size: 40px; font-weight: 900; color: #ffd700;
             text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
         }
 
         #goud-converted {
-            font-size: 18px; color: #fff; background: rgba(0,0,0,0.5);
-            padding: 5px 15px; border-radius: 20px; display: inline-block; margin-top: 5px;
+            font-size: 16px; color: #fff; background: rgba(0,0,0,0.7);
+            padding: 4px 12px; border-radius: 20px; display: inline-block; margin-top: 5px;
         }
 
         #airplane {
@@ -46,17 +45,11 @@
             bottom: 40px; left: calc(50% - 25px); z-index: 10;
         }
 
-        .cloud {
-            position: absolute; background: rgba(255, 255, 255, 0.1);
-            border-radius: 50px; animation: moveClouds linear infinite;
-        }
-        @keyframes moveClouds { from { transform: translateY(-50px); } to { transform: translateY(350px); } }
-
         #wallet-container { margin-top: 20px; text-align: center; }
         
         .edittext-pro {
             background: #000; border: 2px solid #ffd700; color: #00ff00;
-            font-size: 24px; font-weight: bold; text-align: center;
+            font-size: 28px; font-weight: bold; text-align: center;
             padding: 10px; border-radius: 15px; width: 220px; margin-bottom: 15px;
         }
 
@@ -79,8 +72,8 @@
         </div>
 
         <div id="wallet-container">
-            <div style="font-size: 11px; margin-bottom: 5px; color: #ffd700;">VALÈ REKIPERE</div>
-            <input type="text" id="edittextGenyen" class="edittext-pro" value="0.00 G" readonly>
+            <div style="font-size: 11px; margin-bottom: 5px; color: #ffd700;">OU GENYEN</div>
+            <input type="text" id="edittextGenyen" class="edittext-pro" value="0" readonly>
             <br>
             <button id="main-btn" onclick="handleButtonClick()">JWE (5 GOUD)</button>
         </div>
@@ -93,7 +86,6 @@
         let gameRunning = false;
         let crashLimit = 0;
         let flightInterval;
-        
         const MILION = 1000000; 
 
         const santimDisplay = document.getElementById('santim-raw');
@@ -111,25 +103,26 @@
             gameRunning = true;
             santimCounter = 0;
             
-            // Reset Vizyèl
+            // UI Reset
             santimDisplay.innerText = "0";
             santimDisplay.style.color = "#ffd700";
             goudDisplay.innerText = "0.00 GOUD";
-            edittextGenyen.value = "0.00 G";
+            edittextGenyen.value = "0"; // Retire desimal la
             airplane.innerText = "✈️";
 
-            // Lojik Entèn
             internalPeye += 5;
-            let balans = internalGenyen - internalPeye;
+            let balansSistèm = internalPeye - internalGenyen;
 
-            // Kalkil Crash (An milyon santim)
-            if (balans <= -500) {
-                crashLimit = Math.floor((Math.random() * 300 + 200) * MILION); // 200G a 500G
-            } else if (balans <= -200) {
-                crashLimit = Math.floor((Math.random() * 100 + 50) * MILION); // 50G a 150G
+            // --- LOJIK SERE (KONTWÒL GANYEN) ---
+            if (balansSistèm < 0) {
+                // Jwè a ap genyen twòp, pété l ant 0.20 G ak 0.90 G
+                crashLimit = Math.floor((Math.random() * 0.7 + 0.2) * MILION);
+            } else if (balansSistèm < 100) {
+                // Nòmal: pété ant 1 G ak 6 G
+                crashLimit = Math.floor((Math.random() * 5 + 1) * MILION);
             } else {
-                // Nòmal: pété ant 1.5G ak 80G
-                crashLimit = Math.floor((Math.random() * 78.5 + 1.5) * MILION);
+                // Si l pèdi anpil (plis pase 300), ba l vòl ant 10 G ak 40 G
+                crashLimit = Math.floor((Math.random() * 30 + 10) * MILION);
             }
 
             mainBtn.innerText = "REKIPERE!";
@@ -137,18 +130,12 @@
             mainBtn.style.color = "white";
 
             flightInterval = setInterval(() => {
-                // Fè santim yo kouri vit pou rive nan milyon
-                let jump = Math.floor(Math.random() * 80000) + 30000;
-                santimCounter += jump;
+                let inc = Math.floor(Math.random() * 60000) + 30000;
+                santimCounter += inc;
                 
-                // Montre santim yo k ap ogmante
                 santimDisplay.innerText = santimCounter.toLocaleString();
-                
-                // Montre konvèsyon an Goud an tan reyèl
-                let valGoud = (santimCounter / MILION).toFixed(2);
-                goudDisplay.innerText = valGoud + " GOUD";
+                goudDisplay.innerText = (santimCounter / MILION).toFixed(2) + " GOUD";
 
-                if (Math.random() > 0.8) createCloud();
                 if (santimCounter >= crashLimit) crash();
             }, 80);
         }
@@ -159,15 +146,18 @@
             santimDisplay.style.color = "#ff4d4d";
             santimDisplay.innerText = "BOOM! 💥";
             airplane.innerText = "🔥";
-            setTimeout(resetUI, 2000);
+            setTimeout(resetUI, 1800);
         }
 
         function cashOut() {
             clearInterval(flightInterval);
             gameRunning = false;
-            let wonVal = (santimCounter / MILION).toFixed(2);
-            internalGenyen += Math.floor(santimCounter / MILION);
-            edittextGenyen.value = wonVal + " G";
+            
+            // Chif won sèlman nan bwat la
+            let wonVal = Math.floor(santimCounter / MILION);
+            internalGenyen += wonVal;
+            
+            edittextGenyen.value = wonVal; // Montre chif won an (ex: 5 oswa 10)
             santimDisplay.style.color = "#00ff00";
             setTimeout(resetUI, 1500);
         }
@@ -178,17 +168,6 @@
             mainBtn.style.color = "black";
             airplane.innerText = "✈️";
             gameRunning = false;
-        }
-
-        function createCloud() {
-            const c = document.createElement('div');
-            c.className = 'cloud';
-            c.style.width = '40px'; c.style.height = '12px';
-            c.style.left = Math.random() * 100 + '%';
-            c.style.top = '-20px';
-            c.style.animationDuration = '1.5s';
-            document.getElementById('sky').appendChild(c);
-            setTimeout(() => c.remove(), 1600);
         }
     </script>
 </body>
