@@ -3,230 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eroblack Secret Logic</title>
+    <title>Eroblack Engine Pro</title>
     <style>
         body {
-            background-color: #050505;
-            color: white;
-            font-family: 'Segoe UI', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
+            background-color: #050505; color: white;
+            font-family: 'Arial', sans-serif;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100vh; margin: 0; overflow: hidden;
         }
 
-        #game-container {
-            width: 350px;
-            height: 500px;
-            background: #000;
-            border: 3px solid #ffd700;
-            border-radius: 30px;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            box-shadow: 0 0 25px rgba(255, 215, 0, 0.2);
-        }
-
-        #sky {
-            width: 100%;
-            height: 280px;
-            background: linear-gradient(to bottom, #001, #003);
-            position: relative;
-            border-radius: 27px 27px 0 0;
-            overflow: hidden;
+        #game-frame {
+            width: 350px; height: 500px;
+            background: #000; border: 4px solid #ffd700; border-radius: 35px;
+            position: relative; overflow: hidden;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
         }
 
         #multiplier {
-            font-size: 55px;
-            font-weight: 900;
-            color: #ffd700;
-            text-align: center;
-            width: 100%;
-            margin-top: 40px;
-            z-index: 5;
-            position: relative;
+            font-size: 50px; font-weight: 900; color: #ffd700;
+            text-align: center; width: 100%; margin-top: 50px;
         }
 
         #airplane {
-            font-size: 60px;
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
+            font-size: 70px; position: absolute;
+            bottom: 50px; left: 50%; transform: translateX(-50%);
             z-index: 10;
         }
 
-        /* Panel pou Jwè a - Li klè epi li senp */
-        #ui-player {
-            width: 100%;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
+        #ui-panel {
+            background: #111; width: 100%; padding: 25px;
+            display: flex; flex-direction: column; align-items: center; gap: 15px;
         }
 
         .display-box {
-            background: #111;
-            border: 2px solid #ffd700;
-            width: 80%;
-            padding: 12px;
-            border-radius: 15px;
-            text-align: center;
+            background: #000; border: 2px solid #ffd700;
+            width: 85%; padding: 10px; border-radius: 15px; text-align: center;
         }
 
-        .label { font-size: 10px; color: #ffd700; font-weight: bold; margin-bottom: 5px; }
-        .value { font-size: 24px; color: #fff; font-weight: bold; }
+        .label { font-size: 11px; color: #ffd700; font-weight: bold; }
+        .value { font-size: 26px; color: #fff; font-weight: bold; }
 
         #main-btn {
-            background: #ffd700;
-            color: #000;
-            border: none;
-            width: 85%;
-            padding: 18px;
-            font-size: 22px;
-            font-weight: 900;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: 0.2s;
+            background: #ffd700; color: #000; border: none;
+            width: 90%; padding: 20px; font-size: 24px; font-weight: 900;
+            border-radius: 50px; cursor: pointer;
         }
 
-        #main-btn:active { transform: scale(0.95); }
-
-        /* Nwaj */
         .cloud {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.1);
-            height: 15px;
-            border-radius: 20px;
-            animation: flow linear infinite;
+            position: absolute; background: rgba(255, 255, 255, 0.1);
+            height: 10px; border-radius: 10px; animation: flow linear infinite;
         }
-        @keyframes flow { from { top: -20px; } to { top: 300px; } }
+        @keyframes flow { from { top: -20px; } to { top: 350px; } }
     </style>
 </head>
 <body>
 
-    <div id="game-container">
-        <div id="sky">
-            <div id="multiplier">0.00</div>
-            <div id="airplane">✈️</div>
+    <div id="game-frame">
+        <div id="multiplier">0.00</div>
+        <div id="airplane">✈️</div>
+    </div>
+
+    <div id="ui-panel">
+        <div class="display-box">
+            <div class="label">MIZ AKTUAL</div>
+            <div class="value">5 GOUD</div>
         </div>
-
-        <div id="ui-player">
-            <div class="display-box">
-                <div class="label">MIZ OU</div>
-                <div id="txtMiz" class="value">5 GOUD</div>
-            </div>
-
-            <div class="display-box">
-                <div class="label">REKÒMPANS</div>
-                <div id="txtGenyen" class="value">0.00 G</div>
-            </div>
-
-            <button id="main-btn" onclick="handleInput()">JWE</button>
+        <div class="display-box">
+            <div class="label">OU GENYEN</div>
+            <div id="txtGenyen" class="value">0.00 G</div>
         </div>
+        <button id="main-btn" onclick="handleBtn()">JWE</button>
     </div>
 
     <script>
-        // --- MEMWA ENTÈN (Sistèm nan sèl ki konnen sa) ---
-        let memwaPeye = 0;
-        let memwaGenyen = 0;
-        let santimCounter = 0;
+        // --- LOGIQUE INTERNE (CACHE) ---
+        let internalPeye = 0;
+        let internalGenyen = 0;
+        let santimTotal = 0;
         let isRunning = false;
-        let crashLimit = 0;
-        let gameLoop;
-        const GOURDE = 1000000;
+        let crashPoint = 0;
+        let flightInterval;
+        
+        const MILION = 1000000; // 1,000,000 santim = 1 Goud
+        const MAX_LIMIT = 100 * MILION; // Limit 100 Goud
 
         const btn = document.getElementById('main-btn');
-        const displayMulti = document.getElementById('multiplier');
-        const displayGenyen = document.getElementById('txtGenyen');
+        const countDisplay = document.getElementById('multiplier');
+        const genyenDisplay = document.getElementById('txtGenyen');
         const airplane = document.getElementById('airplane');
 
-        function handleInput() {
-            if (!isRunning) {
-                prepareNewFlight();
-            } else {
-                cashOut();
-            }
+        function handleBtn() {
+            if (!isRunning) startNewGame();
+            else cashOut();
         }
 
-        function prepareNewFlight() {
-            // Chak fwa li rekòmanse, ekran an vin pwòp
-            displayGenyen.innerText = "0.00 G";
-            displayMulti.innerText = "0.00";
-            displayMulti.style.color = "#ffd700";
+        function startNewGame() {
+            // Reset vizyèl
+            countDisplay.innerText = "0.00";
+            countDisplay.style.color = "#ffd700";
+            genyenDisplay.innerText = "0.00 G";
             airplane.innerText = "✈️";
             
-            // Sistèm nan pran 5 goud la an kachèt
-            memwaPeye += 5;
-            
-            startFlight();
-        }
-
-        function startFlight() {
+            // Kontwòl an kachèt
+            internalPeye += 5;
+            santimTotal = 0;
             isRunning = true;
-            santimCounter = 0;
 
-            // --- LOJIK SEKRE ---
-            let balansSekre = memwaGenyen - memwaPeye;
+            // --- INTELLIGENCE DE CONTRÔLE ---
+            let balance = internalGenyen - internalPeye;
             
-            if (balansSekre <= -500) {
-                // Rabè si l pèdi anpil: avyon an ka rive 100g rive 500g
-                crashLimit = Math.floor((Math.random() * 400 + 100) * GOURDE);
-            } else if (balansSekre <= -200) {
-                // Chans mwayen: 50g rive 150g
-                crashLimit = Math.floor((Math.random() * 100 + 50) * GOURDE);
+            if (balance <= -250) {
+                // Si l pèdi plis pase 250 Goud, ba li yon "Mega Rabè"
+                // Avyon an ap moute ant 50g rive 99g
+                crashPoint = Math.floor((Math.random() * 49 + 50) * MILION);
             } else {
-                // Lojik nòmal: pété ant 0.5g ak 80g
-                crashLimit = Math.floor((Math.random() * 80) * GOURDE) + (0.2 * GOURDE);
+                // Lojik nòmal men ki ba li anpil chans
+                // Avyon an p'ap janm pété anba 2 Goud pou l pa dekourage
+                crashPoint = Math.floor((Math.random() * 30 + 2) * MILION);
             }
 
-            btn.innerText = "REKIPERE";
+            btn.innerText = "REKIPERE KÒB LA!";
             btn.style.background = "#ff4d4d";
-            btn.style.color = "#fff";
+            btn.style.color = "white";
 
-            gameLoop = setInterval(() => {
-                santimCounter += Math.floor(Math.random() * 15000) + 8000;
-                let goudAktyel = (santimCounter / GOURDE).toFixed(2);
-                displayMulti.innerText = goudAktyel;
+            flightInterval = setInterval(() => {
+                // Kalkil rapid pou rive nan milyon yo
+                santimTotal += Math.floor(Math.random() * 45000) + 25000;
+                
+                let currentGoud = (santimTotal / MILION).toFixed(2);
+                countDisplay.innerText = currentGoud;
 
                 if (Math.random() > 0.8) createCloud();
 
-                if (santimCounter >= crashLimit) {
-                    crash();
-                }
-            }, 60);
+                if (santimTotal >= crashPoint) crash();
+            }, 50);
         }
 
         function crash() {
-            clearInterval(gameLoop);
+            clearInterval(flightInterval);
             isRunning = false;
-            displayMulti.innerText = "CRASH! 💥";
-            displayMulti.style.color = "red";
+            countDisplay.innerText = "BOOM! 💥";
+            countDisplay.style.color = "red";
             airplane.innerText = "🔥";
             
-            setTimeout(() => {
-                resetUI();
-            }, 1500);
+            setTimeout(resetUI, 2000);
         }
 
         function cashOut() {
-            clearInterval(gameLoop);
+            clearInterval(flightInterval);
             isRunning = false;
             
-            let wonAmount = Math.floor(santimCounter / GOURDE);
-            memwaGenyen += wonAmount; // Sistèm nan mete l nan memwa li
+            let won = Math.floor(santimTotal / MILION);
+            internalGenyen += won;
             
-            displayGenyen.innerText = wonAmount.toFixed(2) + " G";
-            displayMulti.style.color = "#00ff00";
+            genyenDisplay.innerText = won.toFixed(2) + " G";
+            countDisplay.style.color = "#00ff00";
             
-            setTimeout(() => {
-                resetUI();
-            }, 1000);
+            setTimeout(resetUI, 1500);
         }
 
         function resetUI() {
@@ -239,11 +172,11 @@
         function createCloud() {
             const c = document.createElement('div');
             c.className = 'cloud';
-            c.style.width = (Math.random() * 50 + 20) + 'px';
+            c.style.width = '40px';
             c.style.left = Math.random() * 100 + '%';
-            c.style.animationDuration = '2s';
-            document.getElementById('sky').appendChild(c);
-            setTimeout(() => c.remove(), 2000);
+            c.style.animationDuration = '1.5s';
+            document.getElementById('game-frame').appendChild(c);
+            setTimeout(() => c.remove(), 1500);
         }
     </script>
 </body>
