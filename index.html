@@ -3,72 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Eroblack Booster Pro</title>
+    <title>Eroblack RAM Booster Avion</title>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { 
-            background: #000; color: white; text-align: center; 
+            background: #050a0f; color: white; text-align: center; 
             margin: 0; font-family: 'Segoe UI', Roboto, sans-serif; 
             display: flex; flex-direction: column; align-items: center;
             justify-content: center; height: 100vh; overflow: hidden;
         }
 
+        /* --- NUAJ ANIMASYON --- */
+        .clouds-container {
+            position: absolute; width: 100%; height: 200px;
+            bottom: 20px; overflow: hidden; pointer-events: none;
+        }
+        .cloud {
+            position: absolute; background: rgba(255, 255, 255, 0.15);
+            filter: blur(15px); border-radius: 50%; animation: moveClouds linear infinite;
+        }
+        @keyframes moveClouds {
+            from { transform: translateX(400px); }
+            to { transform: translateX(-200px); }
+        }
+
         /* --- STYLE DIALOGUE --- */
         #modal {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95);
             display: none; justify-content: center; align-items: center; z-index: 1000;
         }
         .modal-card {
-            width: 85%; background: #1a1a1a; border: 2px solid #ffd700;
-            border-radius: 20px; padding: 25px; text-align: center;
+            width: 85%; background: #111; border: 2px solid #00f2ff;
+            border-radius: 25px; padding: 25px; text-align: center;
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.3);
         }
         .btn-row { display: flex; gap: 10px; margin-top: 20px; }
-        .btn-m { flex: 1; padding: 15px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; font-size: 16px; }
+        .btn-m { flex: 1; padding: 15px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; }
 
         /* --- GAME BOX --- */
         #game-box {
-            width: 340px; height: 380px; background: radial-gradient(circle, #050505, #111);
-            border: 3px solid #ffd700; border-radius: 35px;
+            width: 350px; height: 380px; 
+            background: linear-gradient(180deg, #0a1118 0%, #000 100%);
+            border: 2px solid rgba(0, 242, 255, 0.5); border-radius: 40px;
             position: relative; overflow: hidden;
+            box-shadow: inset 0 0 50px rgba(0, 242, 255, 0.1);
         }
-        #santim-raw { font-size: 45px; font-weight: 900; color: #ffd700; margin-top: 50px; text-shadow: 0 0 15px #ffd700; }
-        #goud-converted { font-size: 18px; color: #fff; opacity: 0.7; margin-top: 5px; }
-        #airplane { font-size: 60px; position: absolute; bottom: 40px; left: 40%; transition: 0.1s; }
+
+        #santim-raw { font-size: 50px; font-weight: 900; color: #00f2ff; margin-top: 40px; text-shadow: 0 0 20px #00f2ff; }
+        #goud-converted { font-size: 18px; color: #fff; opacity: 0.8; letter-spacing: 2px; }
+
+        /* BOOSTER AIRPLANE DESIGN */
+        #airplane-container {
+            position: absolute; bottom: 80px; left: 50%;
+            transform: translateX(-50%); transition: 0.2s;
+        }
+        #airplane {
+            font-size: 70px; display: inline-block;
+            filter: drop-shadow(0 0 15px #00f2ff);
+            animation: thrust 0.2s infinite alternate;
+        }
+        .fire {
+            position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%);
+            width: 20px; height: 40px; background: linear-gradient(#00f2ff, transparent);
+            filter: blur(5px); opacity: 0;
+        }
+
+        @keyframes thrust {
+            from { transform: translateY(0px) rotate(-2deg); }
+            to { transform: translateY(-5px) rotate(2deg); }
+        }
 
         /* --- UI PANEL --- */
-        #ui-panel { width: 340px; margin-top: 20px; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .field { background: #111; border: 1px solid #333; padding: 10px; border-radius: 15px; text-align: left; }
-        label { font-size: 10px; color: #888; text-transform: uppercase; display: block; margin-bottom: 4px; font-weight: bold; }
-        .edittext { font-size: 24px; font-weight: bold; color: #00ff00; background: none; border: none; width: 100%; outline: none; }
+        #ui-panel { width: 350px; margin-top: 20px; z-index: 10; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
+        .field { background: rgba(255,255,255,0.05); border: 1px solid rgba(0, 242, 255, 0.2); padding: 12px; border-radius: 20px; text-align: left; }
+        label { font-size: 10px; color: #00f2ff; text-transform: uppercase; display: block; margin-bottom: 4px; font-weight: bold; }
+        .edittext { font-size: 26px; font-weight: bold; color: #fff; background: none; border: none; width: 100%; outline: none; }
 
         #draw-btn {
-            width: 100%; background: linear-gradient(#ffd700, #ff8c00); color: #000;
-            border: none; padding: 18px; border-radius: 50px; font-weight: bold;
+            width: 100%; background: linear-gradient(180deg, #00f2ff, #0072ff); color: #000;
+            border: none; padding: 20px; border-radius: 50px; font-weight: 900;
             font-size: 20px; cursor: pointer; text-transform: uppercase;
+            box-shadow: 0 10px 20px rgba(0, 114, 255, 0.4); transition: 0.3s;
         }
+        #draw-btn:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
 
 <div id="game-box">
+    <div class="clouds-container" id="clouds"></div>
+    
     <div id="santim-raw">0</div>
     <div id="goud-converted">0.00 GOUD</div>
-    <div id="airplane">✈️</div>
+
+    <div id="airplane-container">
+        <div id="airplane">🚀</div>
+        <div class="fire" id="engine-fire"></div>
+    </div>
 </div>
 
 <div id="ui-panel">
     <div class="grid-2">
         <div class="field">
             <label>Peye</label>
-            <input type="text" id="edittextpeye" value="0" readonly class="edittext" style="color: #00ff00;">
+            <input type="text" id="edittextpeye" value="0" readonly class="edittext">
         </div>
         <div class="field">
             <label>Genyen</label>
-            <input type="text" id="edittextgenyen" value="0" readonly class="edittext" style="color: #ffcc00;">
+            <input type="text" id="edittextgenyen" value="0" readonly class="edittext" style="color: #00f2ff;">
         </div>
     </div>
-    <button id="draw-btn">DEMARE AVYON</button>
+    <button id="draw-btn">BOOST MEMORY</button>
 </div>
 
 <div id="modal">
@@ -79,6 +125,7 @@
     const santimDisplay = document.getElementById("santim-raw");
     const goudDisplay = document.getElementById("goud-converted");
     const airplane = document.getElementById("airplane");
+    const fire = document.getElementById("engine-fire");
     const drawBtn = document.getElementById("draw-btn");
     const inputPeye = document.getElementById("edittextpeye");
     const inputGenyen = document.getElementById("edittextgenyen");
@@ -93,7 +140,23 @@
     let consecutiveLosses = 0;
     const MILION = 1000000;
 
-    // --- FONKSYON KOMINIKASYON ---
+    // Kreye Nuaj
+    function createClouds() {
+        const container = document.getElementById('clouds');
+        for(let i=0; i<6; i++) {
+            let c = document.createElement('div');
+            c.className = 'cloud';
+            let size = Math.random() * 60 + 40;
+            c.style.width = size + 'px';
+            c.style.height = (size/2) + 'px';
+            c.style.top = Math.random() * 150 + 'px';
+            c.style.left = Math.random() * 300 + 'px';
+            c.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            container.appendChild(c);
+        }
+    }
+    createClouds();
+
     function sendToSketchware(bwat, val) {
         if (window.Android && window.Android.voyeKòb) {
             window.Android.voyeKòb(bwat, val.toString());
@@ -101,18 +164,15 @@
     }
 
     drawBtn.onclick = () => {
-        if (isRunning) {
-            cashOut();
-            return;
-        }
+        if (isRunning) { cashOut(); return; }
         
         modal.style.display = "flex";
         modalContent.innerHTML = `
-            <h2 style="color:#ffd700">KONFIMASYON</h2>
-            <p style="margin: 20px 0; font-size: 18px; color: #fff;">Vòl sa a koute <b>5 GOUD</b>. Èske w prè?</p>
+            <h2 style="color:#00f2ff">BOOSTER ENGINE</h2>
+            <p style="margin: 20px 0; font-size: 18px; color: #fff;">Depans: <b>5 GOUD</b><br>Optimize sistèm nan?</p>
             <div class="btn-row">
-                <button class="btn-m" style="background:#444; color:#fff" onclick="modal.style.display='none'">NON</button>
-                <button class="btn-m" style="background:#ffd700; color:#000" onclick="confirmStart()">WI</button>
+                <button class="btn-m" style="background:#222; color:#fff" onclick="modal.style.display='none'">NON</button>
+                <button class="btn-m" style="background:#00f2ff; color:#000" onclick="confirmStart()">WI, BOOST!</button>
             </div>
         `;
     };
@@ -122,29 +182,28 @@
         isRunning = true;
         santimCounter = 0;
         
-        // Peye 5 Goud
         inputPeye.value = "5";
         sendToSketchware("peye", "5");
-        
         inputGenyen.value = "0";
         sendToSketchware("genyen", "0");
 
-        // Lojik Kazino (Booster)
+        // Lojik Booster Sere (Pwotokòl Peyman)
         if (lastWin) {
             crashLimit = Math.floor((Math.random() * 0.7 + 0.2) * MILION);
         } else if (consecutiveLosses >= 5) {
-            crashLimit = Math.floor((Math.random() * 4 + 6) * MILION);
+            crashLimit = Math.floor((Math.random() * 5 + 5) * MILION);
         } else {
-            crashLimit = Math.floor((Math.random() * 1.5 + 1.1) * MILION);
+            crashLimit = Math.floor((Math.random() * 1.8 + 1.1) * MILION);
         }
 
-        drawBtn.innerText = "REKIPERE KÒB!";
-        drawBtn.style.background = "linear-gradient(#f00, #900)";
+        drawBtn.innerText = "STOP & COLLECT";
+        drawBtn.style.background = "linear-gradient(180deg, #ff0055, #990022)";
         drawBtn.style.color = "#fff";
-        airplane.innerText = "✈️";
+        fire.style.opacity = "1";
+        airplane.innerText = "🚀";
 
         loop = setInterval(() => {
-            santimCounter += Math.floor(Math.random() * 80000) + 30000;
+            santimCounter += Math.floor(Math.random() * 95000) + 25000;
             santimDisplay.innerText = santimCounter.toLocaleString();
             goudDisplay.innerText = (santimCounter / MILION).toFixed(2) + " GOUD";
 
@@ -157,19 +216,20 @@
         isRunning = false;
         lastWin = false;
         consecutiveLosses++;
-        
-        santimDisplay.innerText = "BOOM! 💥";
-        airplane.innerText = "🔥";
+        fire.style.opacity = "0";
+        santimDisplay.innerText = "SYSTEM FAIL";
+        santimDisplay.style.color = "#ff0055";
+        airplane.innerText = "💥";
         sendToSketchware("genyen", "0");
-        
         setTimeout(resetGame, 2000);
     }
 
     function cashOut() {
         clearInterval(loop);
         isRunning = false;
-        
+        fire.style.opacity = "0";
         let won = Math.floor(santimCounter / MILION);
+        
         if (won > 0) {
             lastWin = true;
             consecutiveLosses = 0;
@@ -178,19 +238,20 @@
             
             modal.style.display = "flex";
             modalContent.innerHTML = `
-                <h2 style="color:#0f0">BRAVO!</h2>
-                <h1 style="font-size:40px; color:#fff;">${won} GOUD</h1>
-                <button class="btn-m" style="background:#ffd700; color:#000; margin-top:15px;" onclick="modal.style.display='none'">OK</button>
+                <h2 style="color:#00f2ff">OPTIMIZED!</h2>
+                <h1 style="font-size:45px; color:#fff;">+${won} GOUD</h1>
+                <button class="btn-m" style="background:#00f2ff; color:#000; margin-top:15px;" onclick="modal.style.display='none'">OK</button>
             `;
         }
         resetGame();
     }
 
     function resetGame() {
-        drawBtn.innerText = "DEMARE AVYON";
-        drawBtn.style.background = "linear-gradient(#ffd700, #ff8c00)";
+        drawBtn.innerText = "BOOST MEMORY";
+        drawBtn.style.background = "linear-gradient(180deg, #00f2ff, #0072ff)";
         drawBtn.style.color = "#000";
-        airplane.innerText = "✈️";
+        santimDisplay.style.color = "#00f2ff";
+        airplane.innerText = "🚀";
         isRunning = false;
     }
 </script>
