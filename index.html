@@ -3,124 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eroblack Flight Booster</title>
+    <title>Eroblack Sky Booster</title>
     <style>
         body {
-            background-color: #1a1a1a;
+            background-color: #0b0d17;
             color: white;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
             margin: 0;
+            overflow: hidden;
         }
 
-        /* Design de l'écran de jeu */
-        #game-container {
-            width: 90%;
-            max-width: 500px;
-            background: linear-gradient(145deg, #222, #333);
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            text-align: center;
-            border: 2px solid #ffd700;
-        }
-
-        #display-area {
-            height: 200px;
+        /* Background Anime ak nwaj */
+        #game-screen {
+            width: 350px;
+            height: 500px;
+            background: linear-gradient(to bottom, #1e3c72, #2a5298);
+            border-radius: 30px;
             position: relative;
             overflow: hidden;
-            background: #000;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            border: 4px solid #ffd700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
         }
 
-        #airplane {
-            font-size: 50px;
+        .cloud {
             position: absolute;
-            bottom: 20px;
-            left: 20px;
-            transition: transform 0.1s linear;
+            width: 100px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            animation: moveClouds linear infinite;
         }
 
-        #counter {
-            font-size: 40px;
-            font-weight: bold;
-            color: #ffd700;
+        @keyframes moveClouds {
+            from { top: -50px; }
+            to { top: 550px; }
+        }
+
+        /* Avyon ak Kontè */
+        #airplane {
+            font-size: 60px;
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 5;
+            transition: bottom 0.1s ease-out;
+        }
+
+        #counter-container {
+            position: absolute;
+            top: 40px;
+            width: 100%;
+            text-align: center;
             z-index: 10;
         }
 
-        /* Les champs texte (EditText) */
-        .info-box {
-            margin: 10px 0;
-            font-size: 18px;
-        }
-
-        input {
-            background: #444;
+        #counter {
+            font-size: 35px;
+            font-weight: bold;
             color: #ffd700;
-            border: 1px solid #ffd700;
-            padding: 10px;
-            border-radius: 5px;
-            text-align: center;
-            font-size: 20px;
-            width: 80%;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
         }
 
-        /* Bouton Booster / Cash Out */
-        #action-btn {
-            background: linear-gradient(to bottom, #ffd700, #b8860b);
-            color: black;
+        /* Interface anba a */
+        #controls {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .edit-text {
+            background: #222;
+            color: #00ff00;
+            border: 2px solid #ffd700;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 20px;
+            width: 200px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background: linear-gradient(145deg, #ffd700, #b8860b);
             border: none;
             padding: 15px 40px;
-            font-size: 22px;
+            font-size: 20px;
             font-weight: bold;
             border-radius: 50px;
             cursor: pointer;
-            transition: 0.3s;
-            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
 
-        #action-btn:active {
-            transform: scale(0.95);
+        /* Pop-up Dialogue */
+        #dialogue-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            color: black;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            z-index: 100;
+            display: none;
+            width: 250px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
         }
 
-        #action-btn:disabled {
-            background: #555;
-            color: #888;
-            cursor: not-allowed;
-        }
-
-        .status-msg {
-            margin-top: 10px;
-            height: 20px;
-            font-weight: bold;
+        #dialogue-box button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
         }
     </style>
 </head>
 <body>
 
-    <div id="game-container">
-        <h2 style="color: #ffd700; margin-top: 0;">FLIGHT BOOSTER</h2>
+    <div id="game-screen">
+        <div id="counter-container">
+            <div id="counter">0</div>
+            <div style="font-size: 14px;">SANTIM</div>
+        </div>
         
-        <div id="display-area">
-            <div id="airplane">✈️</div>
-            <div id="counter">0.00</div>
-        </div>
+        <div id="airplane">✈️</div>
 
-        <div class="info-box">
-            <label>KREDI GENYEN (Gourdes):</label><br>
-            <input type="text" id="edittextGenyen" value="0" readonly>
+        <div id="dialogue-box">
+            <h3>MISE KONFIME</h3>
+            <p>Mise la se 5 Goud. Èske ou vle jwe?</p>
+            <button onclick="confirmBet()" style="background: #28a745; color: white;">WI</button>
+            <button onclick="closeDialog()" style="background: #dc3545; color: white;">NON</button>
         </div>
+    </div>
 
-        <button id="action-btn">KÒMANSE VOL LA</button>
-        <div id="status" class="status-msg"></div>
+    <div id="controls">
+        <div style="font-size: 14px; margin-bottom: 5px;">BALANS (GOURDES)</div>
+        <input type="text" id="edittextGenyen" class="edit-text" value="0" readonly>
+        <br>
+        <button id="main-btn" onclick="showBetDialog()">KÒMANSE VOL LA</button>
     </div>
 
     <script>
@@ -129,80 +154,97 @@
         let crashPoint = 0;
         let interval;
         let totalGourdes = 0;
+        const MILION = 1000000;
 
         const counterDisplay = document.getElementById('counter');
-        const actionBtn = document.getElementById('action-btn');
+        const mainBtn = document.getElementById('main-btn');
         const airplane = document.getElementById('airplane');
         const edittextGenyen = document.getElementById('edittextGenyen');
-        const statusMsg = document.getElementById('status');
+        const dialog = document.getElementById('dialogue-box');
+        const gameScreen = document.getElementById('game-screen');
+
+        // Kreye nwaj yo pa azar
+        function createCloud() {
+            const cloud = document.createElement('div');
+            cloud.className = 'cloud';
+            cloud.style.left = Math.random() * 250 + 'px';
+            cloud.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            gameScreen.appendChild(cloud);
+            setTimeout(() => { cloud.remove(); }, 4000);
+        }
+
+        function showBetDialog() {
+            if (!gameActive) {
+                dialog.style.display = 'block';
+            } else {
+                cashOut();
+            }
+        }
+
+        function closeDialog() {
+            dialog.style.display = 'none';
+        }
+
+        function confirmBet() {
+            closeDialog();
+            startGame();
+        }
 
         function startGame() {
             gameActive = true;
             counterValue = 0;
-            statusMsg.innerText = "";
-            statusMsg.style.color = "white";
+            crashPoint = Math.floor(Math.random() * 3000000) + 100000; // Ka rive jiska 3 milyon
             
-            // Defini kote l ap pété a pa azar (ant 100 ak 50000 pa egzanp)
-            crashPoint = Math.floor(Math.random() * 40000) + 1000;
+            mainBtn.innerText = "REKIPERE KASE";
+            mainBtn.style.background = "linear-gradient(145deg, #ff4d4d, #b30000)";
             
-            actionBtn.innerText = "REKIPERE KREDI";
-            actionBtn.style.background = "linear-gradient(to bottom, #ff4500, #8b0000)";
-            actionBtn.style.color = "white";
-
             interval = setInterval(() => {
-                counterValue += Math.floor(Math.random() * 150) + 10;
-                counterDisplay.innerText = counterValue;
+                counterValue += Math.floor(Math.random() * 15000) + 5000;
+                counterDisplay.innerText = counterValue.toLocaleString();
 
-                // Animasyon avyon an k ap monte
-                let move = (counterValue / 500);
-                airplane.style.transform = `translate(${move}px, -${move}px)`;
+                // Animasyon avyon an k ap monte yon ti jan
+                let altitude = 50 + (counterValue / 10000);
+                if (altitude < 400) airplane.style.bottom = altitude + "px";
+
+                createCloud();
 
                 if (counterValue >= crashPoint) {
                     crashGame();
                 }
-            }, 50);
+            }, 80);
         }
 
         function crashGame() {
             clearInterval(interval);
             gameActive = false;
-            statusMsg.innerText = "BOOM! AVYON AN ÉCLATÉ! 💥";
-            statusMsg.style.color = "red";
             counterDisplay.style.color = "red";
+            counterDisplay.innerText = "BOOM! 💥";
+            airplane.innerText = "🔥";
             
-            resetButton();
+            setTimeout(() => {
+                airplane.innerText = "✈️";
+                airplane.style.bottom = "50px";
+                resetUI();
+            }, 2000);
         }
 
         function cashOut() {
             clearInterval(interval);
             gameActive = false;
             
-            // Kalkil: Chak 10,000 = 1 Gourde
-            let wonAmount = Math.floor(counterValue / 10000);
+            // Kalkil: Chak 1,000,000 = 1 Gourde
+            let wonAmount = Math.floor(counterValue / MILION);
             totalGourdes += wonAmount;
             
             edittextGenyen.value = totalGourdes;
-            statusMsg.innerText = "BRAVO! OU REKIPERE " + wonAmount + " GOURDES!";
-            statusMsg.style.color = "#00ff00";
-            
-            resetButton();
+            resetUI();
         }
 
-        function resetButton() {
-            actionBtn.innerText = "REKÒMANSE VOL LA";
-            actionBtn.style.background = "linear-gradient(to bottom, #ffd700, #b8860b)";
-            actionBtn.style.color = "black";
-            airplane.style.transform = `translate(0px, 0px)`;
-            setTimeout(() => { counterDisplay.style.color = "#ffd700"; }, 1000);
+        function resetUI() {
+            mainBtn.innerText = "KÒMANSE VOL LA";
+            mainBtn.style.background = "linear-gradient(145deg, #ffd700, #b8860b)";
+            counterDisplay.style.color = "#ffd700";
         }
-
-        actionBtn.addEventListener('click', () => {
-            if (!gameActive) {
-                startGame();
-            } else {
-                cashOut();
-            }
-        });
     </script>
 </body>
 </html>
