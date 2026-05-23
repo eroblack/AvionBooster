@@ -1,173 +1,193 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="ht">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eroblack Pro Flight - No Decimals</title>
+    <title>Eroblack Booster - Dialogue Edition</title>
     <style>
-        body {
-            background-color: #050505; color: white;
-            font-family: 'Trebuchet MS', sans-serif;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            height: 100vh; margin: 0; overflow: hidden;
-        }
-
-        #game-box {
-            width: 360px; height: 550px;
-            background: linear-gradient(to bottom, #111, #222);
-            border: 3px solid #ffd700; border-radius: 40px;
-            position: relative; box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+        body { 
+            background: #000; color: white; text-align: center; 
+            margin: 0; font-family: 'Segoe UI', sans-serif; 
             display: flex; flex-direction: column; align-items: center;
         }
 
-        #sky {
-            width: 100%; height: 300px;
-            background: #000814; position: relative;
-            overflow: hidden; border-radius: 35px 35px 0 0;
+        /* --- STYLE DIALOGUE --- */
+        #custom-dialogue {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: #111; border: 2px solid #ffd700; border-radius: 20px;
+            padding: 20px; width: 280px; z-index: 1000; display: none;
+            box-shadow: 0 0 50px rgba(255, 214, 0, 0.4);
+        }
+        #dialogue-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 999; display: none;
+        }
+        .diag-btn {
+            padding: 10px 20px; margin: 10px; border-radius: 10px; border: none;
+            font-weight: bold; cursor: pointer;
+        }
+        .btn-wi { background: #ffd700; color: #000; }
+        .btn-non { background: #444; color: #fff; }
+
+        /* --- VIDEO & GAME BOX --- */
+        #video-container { width: 100%; height: 180px; background: #000; border-bottom: 2px solid #ffd700; }
+        #game-box {
+            width: 340px; height: 350px; background: #050505;
+            border: 3px solid #ffd700; border-radius: 30px; margin-top: 15px;
+            position: relative; overflow: hidden;
         }
 
-        #multiplier-display {
-            position: absolute; top: 50px; width: 100%; text-align: center; z-index: 20;
-        }
+        #santim-raw { font-size: 40px; font-weight: 900; color: #ffd700; margin-top: 40px; }
+        #goud-converted { font-size: 16px; color: #fff; opacity: 0.8; }
+        #airplane { font-size: 50px; position: absolute; bottom: 30px; left: 42%; }
 
-        #santim-raw {
-            font-size: 40px; font-weight: 900; color: #ffd700;
-            text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
-        }
-
-        #goud-converted {
-            font-size: 16px; color: #fff; background: rgba(0,0,0,0.7);
-            padding: 4px 12px; border-radius: 20px; display: inline-block; margin-top: 5px;
-        }
-
-        #airplane {
-            font-size: 50px; position: absolute;
-            bottom: 40px; left: calc(50% - 25px); z-index: 10;
-        }
-
-        #wallet-container { margin-top: 20px; text-align: center; }
-        
-        .edittext-pro {
-            background: #000; border: 2px solid #ffd700; color: #00ff00;
-            font-size: 28px; font-weight: bold; text-align: center;
-            padding: 10px; border-radius: 15px; width: 220px; margin-bottom: 15px;
-        }
+        /* --- STATS PANEL --- */
+        #ui-panel { width: 340px; margin-top: 15px; }
+        .stats-row { display: flex; justify-content: space-between; margin-bottom: 15px; }
+        .box { background: #111; border: 1px solid #ffd700; padding: 10px; border-radius: 12px; width: 45%; }
+        .label { font-size: 10px; color: #ffd700; text-transform: uppercase; }
+        .edittext { font-size: 22px; font-weight: bold; color: #00ff00; }
 
         #main-btn {
             background: linear-gradient(180deg, #ffd700, #ff8c00);
-            border: none; padding: 18px 50px; font-size: 22px;
+            border: none; padding: 18px; width: 100%; font-size: 22px;
             font-weight: bold; border-radius: 50px; cursor: pointer; color: #000;
         }
     </style>
 </head>
 <body>
 
-    <div id="game-box">
-        <div id="sky">
-            <div id="multiplier-display">
-                <div id="santim-raw">0</div>
-                <div id="goud-converted">0.00 GOUD</div>
-            </div>
-            <div id="airplane">✈️</div>
-        </div>
-
-        <div id="wallet-container">
-            <div style="font-size: 11px; margin-bottom: 5px; color: #ffd700;">OU GENYEN</div>
-            <input type="text" id="edittextGenyen" class="edittext-pro" value="0" readonly>
-            <br>
-            <button id="main-btn" onclick="handleButtonClick()">JWE (5 GOUD)</button>
+    <div id="dialogue-overlay"></div>
+    <div id="custom-dialogue">
+        <h3 id="diag-title" style="color:#ffd700; margin-top:0;">MIZE 5 GOUD</h3>
+        <p id="diag-msg">Èske ou vle peye 5 Goud pou demare avyon an?</p>
+        <div id="diag-actions">
+            <button class="diag-btn btn-wi" id="confirm-btn">WI</button>
+            <button class="diag-btn btn-non" onclick="closeDialogue()">NON</button>
         </div>
     </div>
 
+    <div id="video-container"><div id="player"></div></div>
+
+    <div id="game-box">
+        <div id="santim-raw">0</div>
+        <div id="goud-converted">0.00 GOUD</div>
+        <div id="airplane">✈️</div>
+    </div>
+
+    <div id="ui-panel">
+        <div class="stats-row">
+            <div class="box">
+                <div class="label">Total Peye</div>
+                <div id="edittextPeye" class="edittext">0</div>
+            </div>
+            <div class="box">
+                <div class="label">Balans Ou</div>
+                <div id="edittextGenyen" class="edittext">0</div>
+            </div>
+        </div>
+        <button id="main-btn" onclick="handleInput()">DEMARE AVYON</button>
+    </div>
+
     <script>
-        let internalPeye = 0;
-        let internalGenyen = 0;
-        let santimCounter = 0;
-        let gameRunning = false;
-        let crashLimit = 0;
-        let flightInterval;
-        const MILION = 1000000; 
+        let mem_Peye = 0, mem_Genyen = 0, santim = 0, isRunning = false, crashLimit = 0, loop;
+        const MILION = 1000000;
 
-        const santimDisplay = document.getElementById('santim-raw');
-        const goudDisplay = document.getElementById('goud-converted');
-        const mainBtn = document.getElementById('main-btn');
-        const edittextGenyen = document.getElementById('edittextGenyen');
-        const airplane = document.getElementById('airplane');
-
-        function handleButtonClick() {
-            if (!gameRunning) startFlight();
-            else cashOut();
+        // --- DIALOGUE ENGINE ---
+        function showDialogue(title, msg, type) {
+            document.getElementById('diag-title').innerText = title;
+            document.getElementById('diag-msg').innerText = msg;
+            document.getElementById('dialogue-overlay').style.display = 'block';
+            document.getElementById('custom-dialogue').style.display = 'block';
+            
+            const confirmBtn = document.getElementById('confirm-btn');
+            confirmBtn.onclick = function() {
+                closeDialogue();
+                if (type === 'MIZE') processStart();
+                if (type === 'OK') return;
+            };
         }
 
-        function startFlight() {
-            gameRunning = true;
-            santimCounter = 0;
-            
-            // UI Reset
-            santimDisplay.innerText = "0";
-            santimDisplay.style.color = "#ffd700";
-            goudDisplay.innerText = "0.00 GOUD";
-            edittextGenyen.value = "0"; // Retire desimal la
-            airplane.innerText = "✈️";
+        function closeDialogue() {
+            document.getElementById('dialogue-overlay').style.display = 'none';
+            document.getElementById('custom-dialogue').style.display = 'none';
+        }
 
-            internalPeye += 5;
-            let balansSistèm = internalPeye - internalGenyen;
-
-            // --- LOJIK SERE (KONTWÒL GANYEN) ---
-            if (balansSistèm < 0) {
-                // Jwè a ap genyen twòp, pété l ant 0.20 G ak 0.90 G
-                crashLimit = Math.floor((Math.random() * 0.7 + 0.2) * MILION);
-            } else if (balansSistèm < 100) {
-                // Nòmal: pété ant 1 G ak 6 G
-                crashLimit = Math.floor((Math.random() * 5 + 1) * MILION);
+        function handleInput() {
+            if (!isRunning) {
+                if (mem_Genyen >= 5) {
+                    showDialogue("MIZE 5 GOUD", "Sistèm nan pral retire 5 Goud nan balans ou.", "MIZE");
+                } else {
+                    showDialogue("BALANS BAS", "Ou pa gen ase kredi. Gade videyo pou fè plis kòb.", "OK");
+                }
             } else {
-                // Si l pèdi anpil (plis pase 300), ba l vòl ant 10 G ak 40 G
-                crashLimit = Math.floor((Math.random() * 30 + 10) * MILION);
+                cashOut();
             }
+        }
 
-            mainBtn.innerText = "REKIPERE!";
-            mainBtn.style.background = "red";
-            mainBtn.style.color = "white";
+        function processStart() {
+            isRunning = true;
+            santim = 0;
+            mem_Genyen -= 5;
+            mem_Peye += 5;
+            updateUI();
 
-            flightInterval = setInterval(() => {
-                let inc = Math.floor(Math.random() * 60000) + 30000;
-                santimCounter += inc;
-                
-                santimDisplay.innerText = santimCounter.toLocaleString();
-                goudDisplay.innerText = (santimCounter / MILION).toFixed(2) + " GOUD";
+            // Lojik Sekrè Booster
+            let balans = mem_Peye - mem_Genyen;
+            crashLimit = (balans < 0) ? Math.floor((Math.random() * 0.8 + 0.3) * MILION) : Math.floor((Math.random() * 10 + 2) * MILION);
 
-                if (santimCounter >= crashLimit) crash();
+            document.getElementById('main-btn').innerText = "REKIPERE KÒB!";
+            document.getElementById('main-btn').style.background = "red";
+            document.getElementById('airplane').innerText = "✈️";
+
+            loop = setInterval(() => {
+                santim += Math.floor(Math.random() * 90000) + 40000;
+                document.getElementById('santim-raw').innerText = santim.toLocaleString();
+                document.getElementById('goud-converted').innerText = (santim/MILION).toFixed(2) + " GOUD";
+                if (santim >= crashLimit) crash();
             }, 80);
         }
 
         function crash() {
-            clearInterval(flightInterval);
-            gameRunning = false;
-            santimDisplay.style.color = "#ff4d4d";
-            santimDisplay.innerText = "BOOM! 💥";
-            airplane.innerText = "🔥";
-            setTimeout(resetUI, 1800);
+            clearInterval(loop);
+            isRunning = false;
+            document.getElementById('santim-raw').innerText = "BOOM! 💥";
+            document.getElementById('airplane').innerText = "🔥";
+            showDialogue("PÈDI", "Avyon an pété! Ou pèdi 5 Goud la.", "OK");
+            setTimeout(resetButtons, 1000);
         }
 
         function cashOut() {
-            clearInterval(flightInterval);
-            gameRunning = false;
-            
-            // Chif won sèlman nan bwat la
-            let wonVal = Math.floor(santimCounter / MILION);
-            internalGenyen += wonVal;
-            
-            edittextGenyen.value = wonVal; // Montre chif won an (ex: 5 oswa 10)
-            santimDisplay.style.color = "#00ff00";
-            setTimeout(resetUI, 1500);
+            clearInterval(loop);
+            isRunning = false;
+            let won = Math.floor(santim / MILION);
+            mem_Genyen += won;
+            showDialogue("GENYEN!", "Ou rekiperé " + won + " Goud avèk siksè!", "OK");
+            updateUI();
+            resetButtons();
         }
 
-        function resetUI() {
-            mainBtn.innerText = "JWE (5 GOUD)";
-            mainBtn.style.background = "linear-gradient(180deg, #ffd700, #ff8c00)";
-            mainBtn.style.color = "black";
-            airplane.innerText = "✈️";
-            gameRunning = false;
+        function updateUI() {
+            document.getElementById('edittextPeye').innerText = mem_Peye;
+            document.getElementById('edittextGenyen').innerText = mem_Genyen;
+        }
+
+        function resetButtons() {
+            document.getElementById('main-btn').innerText = "DEMARE AVYON";
+            document.getElementById('main-btn').style.background = "linear-gradient(180deg, #ffd700, #ff8c00)";
+            isRunning = false;
+        }
+
+        // --- YOUTUBE API ---
+        var tag = document.createElement('script'); tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        var player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', { height: '100%', width: '100%', videoId: 'BlJUFpQLPJY',
+                playerVars: { 'autoplay': 1, 'controls': 1 },
+                events: { 'onStateChange': (e) => { if(e.data == YT.PlayerState.ENDED) { mem_Genyen += 1; updateUI(); } } }
+            });
         }
     </script>
 </body>
