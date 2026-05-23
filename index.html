@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eroblack Engine Pro</title>
+    <title>Eroblack Secret Engine</title>
     <style>
         body {
             background-color: #050505; color: white;
@@ -13,170 +13,151 @@
         }
 
         #game-frame {
-            width: 350px; height: 500px;
+            width: 350px; height: 400px;
             background: #000; border: 4px solid #ffd700; border-radius: 35px;
             position: relative; overflow: hidden;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
         }
 
         #multiplier {
             font-size: 50px; font-weight: 900; color: #ffd700;
-            text-align: center; width: 100%; margin-top: 50px;
+            text-align: center; width: 100%; margin-top: 60px;
         }
 
         #airplane {
             font-size: 70px; position: absolute;
-            bottom: 50px; left: 50%; transform: translateX(-50%);
+            bottom: 40px; left: 50%; transform: translateX(-50%);
             z-index: 10;
         }
 
         #ui-panel {
-            background: #111; width: 100%; padding: 25px;
-            display: flex; flex-direction: column; align-items: center; gap: 15px;
+            background: #111; width: 350px; padding: 20px;
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+            border-radius: 0 0 30px 30px;
         }
 
         .display-box {
-            background: #000; border: 2px solid #ffd700;
-            width: 85%; padding: 10px; border-radius: 15px; text-align: center;
+            background: #000; border: 1px solid #333;
+            width: 90%; padding: 10px; border-radius: 12px; text-align: center;
         }
 
-        .label { font-size: 11px; color: #ffd700; font-weight: bold; }
-        .value { font-size: 26px; color: #fff; font-weight: bold; }
+        .label { font-size: 10px; color: #ffd700; font-weight: bold; }
+        .value { font-size: 22px; color: #fff; font-weight: bold; }
 
         #main-btn {
             background: #ffd700; color: #000; border: none;
-            width: 90%; padding: 20px; font-size: 24px; font-weight: 900;
-            border-radius: 50px; cursor: pointer;
+            width: 95%; padding: 20px; font-size: 24px; font-weight: 900;
+            border-radius: 15px; cursor: pointer; margin-top: 10px;
         }
-
-        .cloud {
-            position: absolute; background: rgba(255, 255, 255, 0.1);
-            height: 10px; border-radius: 10px; animation: flow linear infinite;
-        }
-        @keyframes flow { from { top: -20px; } to { top: 350px; } }
     </style>
 </head>
 <body>
 
     <div id="game-frame">
-        <div id="multiplier">0.00</div>
+        <div id="multiplier">0.00 G</div>
         <div id="airplane">✈️</div>
     </div>
 
     <div id="ui-panel">
         <div class="display-box">
-            <div class="label">MIZ AKTUAL</div>
-            <div class="value">5 GOUD</div>
-        </div>
-        <div class="display-box">
-            <div class="label">OU GENYEN</div>
+            <div class="label">REKÒMPANS</div>
             <div id="txtGenyen" class="value">0.00 G</div>
         </div>
-        <button id="main-btn" onclick="handleBtn()">JWE</button>
+        <button id="main-btn" onclick="handleBtn()">JWE (5G)</button>
     </div>
 
     <script>
-        // --- LOGIQUE INTERNE (CACHE) ---
-        let internalPeye = 0;
-        let internalGenyen = 0;
-        let santimTotal = 0;
+        // MEMWA SEKRE (JWÈ A PA WÈ SA)
+        let totalPeyeEntèn = 0;
+        let totalGenyenEntèn = 0;
+        
+        let santimCounter = 0;
         let isRunning = false;
         let crashPoint = 0;
-        let flightInterval;
+        let loop;
         
-        const MILION = 1000000; // 1,000,000 santim = 1 Goud
-        const MAX_LIMIT = 100 * MILION; // Limit 100 Goud
+        const MILION = 1000000; 
 
         const btn = document.getElementById('main-btn');
-        const countDisplay = document.getElementById('multiplier');
-        const genyenDisplay = document.getElementById('txtGenyen');
+        const countDisp = document.getElementById('multiplier');
+        const genyenDisp = document.getElementById('txtGenyen');
         const airplane = document.getElementById('airplane');
 
         function handleBtn() {
-            if (!isRunning) startNewGame();
-            else cashOut();
+            if (!isRunning) {
+                startFlight();
+            } else {
+                cashOut();
+            }
         }
 
-        function startNewGame() {
-            // Reset vizyèl
-            countDisplay.innerText = "0.00";
-            countDisplay.style.color = "#ffd700";
-            genyenDisplay.innerText = "0.00 G";
-            airplane.innerText = "✈️";
-            
-            // Kontwòl an kachèt
-            internalPeye += 5;
-            santimTotal = 0;
+        function startFlight() {
+            // Netwaye ekran an nèt
             isRunning = true;
+            santimCounter = 0;
+            countDisp.innerText = "0.00 G";
+            countDisp.style.color = "#ffd700";
+            genyenDisp.innerText = "0.00 G";
+            airplane.innerText = "✈️";
 
-            // --- INTELLIGENCE DE CONTRÔLE ---
-            let balance = internalGenyen - internalPeye;
-            
-            if (balance <= -250) {
-                // Si l pèdi plis pase 250 Goud, ba li yon "Mega Rabè"
-                // Avyon an ap moute ant 50g rive 99g
-                crashPoint = Math.floor((Math.random() * 49 + 50) * MILION);
+            // Kalkile pèt jeneral an kachèt
+            totalPeyeEntèn += 5;
+            let balans = totalGenyenEntèn - totalPeyeEntèn;
+
+            // LOJIK ENTÈLIJAN POU "CRASH"
+            if (balans <= -500) {
+                // Si l pèdi anpil, ba l yon gwo vòl ant 50.00 G ak 99.00 G
+                crashPoint = Math.floor((Math.random() * 49000000) + 50000000);
             } else {
-                // Lojik nòmal men ki ba li anpil chans
-                // Avyon an p'ap janm pété anba 2 Goud pou l pa dekourage
-                crashPoint = Math.floor((Math.random() * 30 + 2) * MILION);
+                // Lojik nòmal, li pété ant 1.00 G ak 30.00 G
+                crashPoint = Math.floor((Math.random() * 29000000) + 1000000);
             }
 
-            btn.innerText = "REKIPERE KÒB LA!";
-            btn.style.background = "#ff4d4d";
+            btn.innerText = "REKIPERE";
+            btn.style.background = "red";
             btn.style.color = "white";
 
-            flightInterval = setInterval(() => {
-                // Kalkil rapid pou rive nan milyon yo
-                santimTotal += Math.floor(Math.random() * 45000) + 25000;
+            loop = setInterval(() => {
+                // Ogmante santim yo rapidman
+                santimCounter += Math.floor(Math.random() * 150000) + 50000;
                 
-                let currentGoud = (santimTotal / MILION).toFixed(2);
-                countDisplay.innerText = currentGoud;
+                // Konvèti 1,000,000 santim an 1.00 Goud
+                let conversion = (santimCounter / MILION).toFixed(2);
+                countDisp.innerText = conversion + " G";
 
-                if (Math.random() > 0.8) createCloud();
-
-                if (santimTotal >= crashPoint) crash();
-            }, 50);
+                if (santimCounter >= crashPoint) {
+                    boom();
+                }
+            }, 80);
         }
 
-        function crash() {
-            clearInterval(flightInterval);
+        function boom() {
+            clearInterval(loop);
             isRunning = false;
-            countDisplay.innerText = "BOOM! 💥";
-            countDisplay.style.color = "red";
+            countDisp.innerText = "BOOM! 💥";
+            countDisp.style.color = "red";
             airplane.innerText = "🔥";
             
-            setTimeout(resetUI, 2000);
+            setTimeout(resetButtons, 1500);
         }
 
         function cashOut() {
-            clearInterval(flightInterval);
+            clearInterval(loop);
             isRunning = false;
             
-            let won = Math.floor(santimTotal / MILION);
-            internalGenyen += won;
+            let won = Math.floor(santimCounter / MILION);
+            totalGenyenEntèn += won; // Sove nan memwa sekre
             
-            genyenDisplay.innerText = won.toFixed(2) + " G";
-            countDisplay.style.color = "#00ff00";
+            genyenDisp.innerText = (santimCounter / MILION).toFixed(2) + " G";
+            countDisp.style.color = "#00ff00";
             
-            setTimeout(resetUI, 1500);
+            setTimeout(resetButtons, 1500);
         }
 
-        function resetUI() {
+        function resetButtons() {
             btn.innerText = "JWE (5G)";
             btn.style.background = "#ffd700";
             btn.style.color = "#000";
             isRunning = false;
-        }
-
-        function createCloud() {
-            const c = document.createElement('div');
-            c.className = 'cloud';
-            c.style.width = '40px';
-            c.style.left = Math.random() * 100 + '%';
-            c.style.animationDuration = '1.5s';
-            document.getElementById('game-frame').appendChild(c);
-            setTimeout(() => c.remove(), 1500);
         }
     </script>
 </body>
